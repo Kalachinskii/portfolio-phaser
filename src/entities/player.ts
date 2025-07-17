@@ -14,6 +14,11 @@ export class Player extends Entity {
     // ключ для понимания какую анимацию делать
     this.textureKey = texture;
     this.moveSpeed = 50;
+    // уменьшение фиизческой оболочки под макет героя
+    this.setSize(28, 32);
+    this.setOffset(10, 16);
+    // уменьшить персонажа
+    this.setScale(0.8);
 
     // как называеться наша анимация - формально
     anims.create({

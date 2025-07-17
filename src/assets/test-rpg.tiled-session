@@ -1,8 +1,4 @@
 {
-    "Map/SizeTest": {
-        "height": 4300,
-        "width": 2
-    },
     "activeFile": "",
     "expandedProjectPaths": [
     ],
@@ -10,19 +6,31 @@
         "": {
             "scaleInDock": 1
         },
+        "#1": {
+            "scaleInEditor": 1
+        },
         "#a": {
             "scaleInEditor": 1
+        },
+        "test.json": {
+            "scale": 0.5,
+            "selectedLayer": -1,
+            "viewCenter": {
+                "x": 420,
+                "y": 250
+            }
+        },
+        "test.json#1": {
+            "scaleInDock": 1
+        },
+        "test.json#b": {
+            "scaleInDock": 1
         }
     },
-    "last.externalTilesetPath": "C:/Users/kalac/Desktop/React/pg/src/assets",
-    "last.imagePath": "C:/Users/kalac/Desktop/React/pg/src/assets",
-    "map.lastUsedFormat": "json",
     "openFiles": [
     ],
     "project": "test-rpg.tiled-project",
     "recentFiles": [
-    ],
-    "tileset.embedInMap": true,
-    "tileset.lastUsedFilter": "Все файлы (*)",
-    "tileset.spacing": 0
+        "test.json"
+    ]
 }

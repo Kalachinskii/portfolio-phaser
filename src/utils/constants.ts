@@ -1,6 +1,7 @@
 // имя карты
 export const TITLES = {
   NAME_MAP: "a",
+  NAME_MAP2: "b",
 };
 
 export const SIZES = {
