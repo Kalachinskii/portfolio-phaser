@@ -47,5 +47,9 @@ export class Durotar extends Phaser.Scene {
   }
 
   // реализация анимаций, действий на клавиши
-  update(time: number, delta: number): void {}
+  update(_: number, delta: number) {
+    // console.log(delta); частота обновления кадров
+
+    this.player?.update(delta);
+  }
 }
