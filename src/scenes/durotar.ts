@@ -66,6 +66,8 @@ export class Durotar extends Phaser.Scene {
     // запрет на объекты wallsLayer - слой со стенами
     this.physics.add.collider(this.player, wallsLayer);
 
+    this.boar.setPlayer(this.player);
+
     wallsLayer?.setCollisionByExclusion([-1]);
     // аналог но в диапазоне id, id виден при выборе элемента в Tiled
     // wallsLayer?.setCollisionBetween(5,24);
@@ -75,5 +77,6 @@ export class Durotar extends Phaser.Scene {
   update(_: number, delta: number) {
     // console.log(delta); частота обновления кадров
     this.player?.update(delta);
+    this.boar.update();
   }
 }
