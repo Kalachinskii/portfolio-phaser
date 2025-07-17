@@ -64,16 +64,18 @@ export class Player extends Entity {
     // надо обновить в цикле сцены в durotar.ts
     // скорость перемещение игрока
     if (keys?.up.isDown) {
-      this.play("up");
+      // запуск анимации , true - не воспроизводи другие
+      this.play("up", true);
+      // передвижение
       this.setPosition(this.x, this.y - delta * 0.25);
     } else if (keys?.down.isDown) {
-      this.play("down");
+      this.play("down", true);
       this.setPosition(this.x, this.y + delta * 0.25);
     } else if (keys?.left.isDown) {
-      this.play("left");
+      this.play("left", true);
       this.setPosition(this.x - delta * 0.25, this.y);
     } else if (keys?.right.isDown) {
-      this.play("right");
+      this.play("right", true);
       this.setPosition(this.x + delta * 0.25, this.y);
     }
   }
