@@ -24,6 +24,14 @@ export function Home() {
       version: import.meta.env.VERSION || "0.0.1",
       parent: gameContainerRef.current,
       backgroundColor: "#000",
+      // задаём физику
+      physics: {
+        default: "arcade",
+        arcade: {
+          // режим дебага - обветка персонажа вид границ
+          debug: true,
+        },
+      },
       scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,

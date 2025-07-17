@@ -3,6 +3,8 @@ import { Entity } from "./entity";
 
 export class Player extends Entity {
   textureKey: string;
+  // скорость
+  private moveSpeed: number;
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
     super(scene, x, y, texture, SPRITES.PLAYER);
     // анимация движения в другие стороны
@@ -11,6 +13,7 @@ export class Player extends Entity {
     const animsFrameRate = 9;
     // ключ для понимания какую анимацию делать
     this.textureKey = texture;
+    this.moveSpeed = 50;
 
     // как называеться наша анимация - формально
     anims.create({
@@ -66,18 +69,24 @@ export class Player extends Entity {
     if (keys?.up.isDown) {
       // запуск анимации , true - не воспроизводи другие
       this.play("up", true);
-      // передвижение
-      this.setPosition(this.x, this.y - delta * 0.25);
+      // передвижение спрайта (не физика! проходит стены)
+      // this.setPosition(this.x, this.y - delta * 0.25);
+      this.setVelocity(0, -delta * this.moveSpeed);
     } else if (keys?.down.isDown) {
       this.play("down", true);
-      this.setPosition(this.x, this.y + delta * 0.25);
+      // this.setPosition(this.x, this.y + delta * 0.25);
+      this.setVelocity(0, delta * this.moveSpeed);
     } else if (keys?.left.isDown) {
       this.play("left", true);
-      this.setPosition(this.x - delta * 0.25, this.y);
+      // this.setPosition(this.x - delta * 0.25, this.y);
+      this.setVelocity(-delta * this.moveSpeed, 0);
     } else if (keys?.right.isDown) {
       this.play("right", true);
-      this.setPosition(this.x + delta * 0.25, this.y);
+      // this.setPosition(this.x + delta * 0.25, this.y);
+      this.setVelocity(delta * this.moveSpeed, 0);
     } else {
+      // остановка персонажа при отпускании кнопки
+      this.setVelocity(0, 0);
       this.stop();
     }
   }

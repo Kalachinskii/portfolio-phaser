@@ -44,12 +44,25 @@ export class Durotar extends Phaser.Scene {
     const wallsLayer = map.createLayer(LAYERS.WALLS, tileset, 0, 0);
     // класс сцены, кардинаты, текстурный ключ из прелоад
     this.player = new Player(this, 400, 250, SPRITES.PLAYER);
+    // камера следует за игроком
+    this.cameras.main.startFollow(this.player);
+    // камера не уйдет за края карты
+    this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+    // физика для мира что-бы не выйти за рамки экрана
+    this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+    // запрет на выход за рамки мира
+    this.player.setCollideWorldBounds(true);
+    // запрет на объекты wallsLayer - слой со стенами
+    this.physics.add.collider(this.player, wallsLayer);
+
+    wallsLayer?.setCollisionByExclusion([-1]);
+    // аналог но в диапазоне id, id виден при выборе элемента в Tiled
+    // wallsLayer?.setCollisionBetween(5,24);
   }
 
   // реализация анимаций, действий на клавиши
   update(_: number, delta: number) {
     // console.log(delta); частота обновления кадров
-
     this.player?.update(delta);
   }
 }
