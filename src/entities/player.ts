@@ -77,6 +77,8 @@ export class Player extends Entity {
     } else if (keys?.right.isDown) {
       this.play("right", true);
       this.setPosition(this.x + delta * 0.25, this.y);
+    } else {
+      this.stop();
     }
   }
 }
