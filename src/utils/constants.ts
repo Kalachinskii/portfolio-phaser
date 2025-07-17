@@ -10,6 +10,10 @@ export const SIZES = {
     WIDTH: 48,
     HEIGHT: 48,
   },
+  BOAR: {
+    WIDTH: 32,
+    HEIGHT: 32,
+  },
 };
 
 // слои
@@ -20,4 +24,8 @@ export const LAYERS = {
 
 export const SPRITES = {
   PLAYER: "Player",
+  BOAR: {
+    // состояния врага - разные анимации
+    base: "Boar",
+  },
 };

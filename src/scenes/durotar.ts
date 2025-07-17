@@ -1,9 +1,11 @@
 import testJSON from "../assets/test.json";
+import { Enemy } from "../entities/enemy";
 import { Player } from "../entities/player";
 import { LAYERS, SIZES, SPRITES, TITLES } from "../utils/constants";
 
 export class Durotar extends Phaser.Scene {
   private player?: Player;
+  private boar: Enemy;
 
   constructor() {
     super("DurotarScene");
@@ -21,6 +23,11 @@ export class Durotar extends Phaser.Scene {
         frameHeight: SIZES.PLAYER.HEIGHT,
       }
     );
+    // загрузка картинки свеньи
+    this.load.spritesheet(SPRITES.BOAR.base, "src/assets/characters/boar.png", {
+      frameWidth: SIZES.BOAR.WIDTH,
+      frameHeight: SIZES.BOAR.HEIGHT,
+    });
   }
 
   // создание определенных моментов
@@ -44,6 +51,10 @@ export class Durotar extends Phaser.Scene {
     const wallsLayer = map.createLayer(LAYERS.WALLS, tileset, 0, 0);
     // класс сцены, кардинаты, текстурный ключ из прелоад
     this.player = new Player(this, 400, 250, SPRITES.PLAYER);
+    // добавить врага кабан
+    // "boar" - ключ для загрузки текстуры - SPRITES.BOAR
+    this.boar = new Enemy(this, 500, 250, SPRITES.BOAR.base);
+
     // камера следует за игроком
     this.cameras.main.startFollow(this.player);
     // камера не уйдет за края карты
