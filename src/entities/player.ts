@@ -36,6 +36,8 @@ export class Player extends Entity {
     this.createAnimation("left", texture.base, 12, 14, anims, animsFrameRate);
     this.createAnimation("right", texture.base, 24, 26, anims, animsFrameRate);
     this.createAnimation("up", texture.base, 36, 38, anims, animsFrameRate);
+
+    this.drawPlayerHealthBar();
     // анимация боя
     this.createAnimation(
       "fight",
@@ -71,6 +73,32 @@ export class Player extends Entity {
       frameRate,
       repeat,
     });
+  }
+
+  // полоска хп - героя
+  private drawPlayerHealthBar() {
+    this.playerHealthBar = this.scene.add.graphics();
+    //
+    this.playerHealthBar.setScrollFactor(0);
+    this.drawHealtBar(this.playerHealthBar, 10, 10, this.health / 100);
+  }
+
+  // полоска хп - противника
+  private drawEnemyHealthBar(target) {
+    this.enemyHealthBar = this.scene.add.graphics();
+    this.enemyHealthBar.setScrollFactor(0);
+
+    this.drawHealtBar(this.enemyHealthBar, 10, 30, target.health / 100);
+  }
+
+  // graphiscs - объект ресования Phaser
+  private drawHealtBar(graphics, x, y, percentage) {
+    graphics.fillStyle(0x000000, 1);
+    graphics.fillRect(x, y, 100, 10);
+
+    graphics.fillStyle(0x00ff00, 1);
+    // полоска уменьщаеться от колличества хп
+    graphics.fillRect(x, y, 100 * percentage, 10);
   }
 
   // все враги на сцене
@@ -116,6 +144,8 @@ export class Player extends Entity {
       // Атакуем в середине анимации
       this.scene.time.delayedCall(300, () => {
         this.attack(target);
+        // отрисока бара хп - моба
+        this.drawEnemyHealthBar(target);
       });
     });
   }
@@ -138,6 +168,8 @@ export class Player extends Entity {
     // Блокируем движение во время атаки
     if (this.isAttacking) return;
     const keys = this.scene.input.keyboard?.createCursorKeys();
+    // перерисовка хп
+    this.drawPlayerHealthBar();
 
     // надо обновить в цикле сцены в durotar.ts
     // скорость перемещение игрока
