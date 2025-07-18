@@ -79,10 +79,42 @@ export class Enemy extends Entity {
     });
   }
 
+  // атака
+  attack(target: Entity) {
+    const time = Math.floor(this.scene.game.loop.time);
+    // переод атаки
+    if (time % 2000 <= 3) {
+      target.takeDamage(10);
+    }
+  }
+
+  // переопределение получение урона у монстра
+  takeDamage(damage: number) {
+    super.takeDamage(damage);
+    // доступно т.к. есть у  родительского класса
+    if (this.health <= 0) {
+      this.deactivate();
+    }
+  }
+
+  // диактивация - монстр убит
+  deactivate() {
+    // остановим анимацию
+    this.stopCycleTween();
+    // сохранить позицию
+    this.setPosition(this.initialPosition.x, this.initialPosition.y);
+    // скрыть видемость героя
+    this.setVisible(false);
+    // флаг логики следования
+    this.isAlive = false;
+    // удаление противника с карты
+    this.destroy();
+  }
+
   // расчитываем дистанцию до персонажа
   update(): void {
     const player = this.player;
-    const distancePlayer = Phaser.Math.Distance.Between(
+    const distanceToPlayer = Phaser.Math.Distance.Between(
       this.x,
       this.y,
       player!.x,
@@ -96,7 +128,7 @@ export class Enemy extends Entity {
       this.initialPosition.y
     );
 
-    if (!this.isFollowing && distancePlayer < this.agroDistance) {
+    if (!this.isFollowing && distanceToPlayer < this.agroDistance) {
       this.isFollowing = true;
       this.stopCycleTween();
     }
@@ -105,8 +137,10 @@ export class Enemy extends Entity {
     if (this.isFollowing && this.isAlive) {
       this.followToPlayer(player as Entity);
       // Начало боя
-      if (distancePlayer < this.attackRange) {
+      if (distanceToPlayer < this.attackRange) {
         this.setVelocity(0, 0);
+        this.attack(player as Entity);
+        // console.log("Атакую! Здоровье цели:", (player as Entity).health);
       }
       // вернуть на исходную позицию
       if (distanceToPosition > this.followRange) {

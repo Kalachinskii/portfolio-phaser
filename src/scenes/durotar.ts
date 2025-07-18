@@ -5,10 +5,11 @@ import { LAYERS, SIZES, SPRITES, TITLES } from "../utils/constants";
 
 export class Durotar extends Phaser.Scene {
   private player?: Player;
-  private boar: Enemy;
+  private boar?: Enemy;
 
   constructor() {
-    super("DurotarScene");
+    // super("DurotarScene");
+    super("ElwynForestScene");
   }
 
   // предзагрузка
@@ -64,7 +65,9 @@ export class Durotar extends Phaser.Scene {
     // запрет на выход за рамки мира
     this.player.setCollideWorldBounds(true);
     // запрет на объекты wallsLayer - слой со стенами
-    this.physics.add.collider(this.player, wallsLayer);
+    if (wallsLayer) {
+      this.physics.add.collider(this.player, wallsLayer);
+    }
 
     this.boar.setPlayer(this.player);
 
@@ -77,6 +80,8 @@ export class Durotar extends Phaser.Scene {
   update(_: number, delta: number) {
     // console.log(delta); частота обновления кадров
     this.player?.update(delta);
-    this.boar.update();
+    this.boar?.update();
+    // console.log(this.player?.health); // здоровье игрока видет
+    // console.log(this.boar?.health); // здоровье свеньи видет
   }
 }
