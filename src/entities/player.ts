@@ -24,49 +24,30 @@ export class Player extends Entity {
 
     this.setupKeyListeners();
     // как называеться наша анимация - формально
+    this.createAnimation("down", texture, 0, 2, anims, animsFrameRate);
+    this.createAnimation("left", texture, 12, 14, anims, animsFrameRate);
+    this.createAnimation("right", texture, 24, 26, anims, animsFrameRate);
+    this.createAnimation("up", texture, 36, 38, anims, animsFrameRate);
+  }
+
+  private createAnimation(
+    // как называеться наша анимация
+    key: string,
+    textureKey: string,
+    // порядок кадров
+    start: number,
+    end: number,
+    anims: Phaser.Animations.AnimationManager,
+    // частота кадров
+    frameRate: number,
+    // зацикленность
+    repeat: number = -1
+  ) {
     anims.create({
-      key: "down",
-      frames: anims.generateFrameNumbers(this.textureKey, {
-        start: 0,
-        end: 2,
-      }),
-      // частота кадров
-      frameRate: animsFrameRate,
-      // зацикленность
-      repeat: -1,
-    });
-    anims.create({
-      key: "left",
-      frames: anims.generateFrameNumbers(this.textureKey, {
-        start: 12,
-        end: 14,
-      }),
-      // частота кадров
-      frameRate: animsFrameRate,
-      // зацикленность
-      repeat: -1,
-    });
-    anims.create({
-      key: "right",
-      frames: anims.generateFrameNumbers(this.textureKey, {
-        start: 24,
-        end: 26,
-      }),
-      // частота кадров
-      frameRate: animsFrameRate,
-      // зацикленность
-      repeat: -1,
-    });
-    anims.create({
-      key: "up",
-      frames: anims.generateFrameNumbers(this.textureKey, {
-        start: 36,
-        end: 38,
-      }),
-      // частота кадров
-      frameRate: animsFrameRate,
-      // зацикленность
-      repeat: -1,
+      key,
+      frames: anims.generateFrameNumbers(textureKey, { start, end }),
+      frameRate,
+      repeat,
     });
   }
 
