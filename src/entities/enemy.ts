@@ -1,13 +1,14 @@
 import { Entity } from "./entity";
 
 export class Enemy extends Entity {
-  private player: Entity;
+  private player?: Entity;
   private isFollowing: boolean;
   private agroDistance: number;
   private followRange: number;
   private attackRange: number;
   private isAlive: boolean;
   private moveSpeed: number;
+  private initialPosition: { x: number; y: number };
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
     super(scene, x, y, texture);
@@ -59,11 +60,11 @@ export class Enemy extends Entity {
   }
 
   // кто, за-кем, с какой скоростью
-  followToPlayer(player) {
+  followToPlayer(player: Entity) {
     this.scene.physics.moveToObject(this, player, this.moveSpeed);
   }
 
-  returnToOriginalPosition(distanceToPosition) {
+  returnToOriginalPosition(distanceToPosition: number) {
     // остановить персонажа
     this.setVelocity(0, 0);
     // передвижение
@@ -84,8 +85,8 @@ export class Enemy extends Entity {
     const distancePlayer = Phaser.Math.Distance.Between(
       this.x,
       this.y,
-      player.x,
-      player.y
+      player!.x,
+      player!.y
     );
     // текущее растояние
     const distanceToPosition = Phaser.Math.Distance.Between(
@@ -102,7 +103,7 @@ export class Enemy extends Entity {
 
     // следовать
     if (this.isFollowing && this.isAlive) {
-      this.followToPlayer(player);
+      this.followToPlayer(player as Entity);
       // Начало боя
       if (distancePlayer < this.attackRange) {
         this.setVelocity(0, 0);
