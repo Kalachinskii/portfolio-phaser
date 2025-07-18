@@ -14,6 +14,8 @@ export class Player extends Entity {
   enemies?: Entity[];
   target: any;
   private isAttacking: boolean = false;
+  private playerHealthBar: Phaser.GameObjects.Graphics | null = null;
+  private enemyHealthBar: Phaser.GameObjects.Graphics | null = null;
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: SpriteType) {
     super(scene, x, y, texture.base, SPRITES.PLAYER.base);
@@ -66,7 +68,7 @@ export class Player extends Entity {
     frameRate: number,
     // зацикленность
     repeat: number = -1
-  ) {
+  ): void {
     anims.create({
       key,
       frames: anims.generateFrameNumbers(textureKey, { start, end }),
@@ -76,7 +78,7 @@ export class Player extends Entity {
   }
 
   // полоска хп - героя
-  private drawPlayerHealthBar() {
+  private drawPlayerHealthBar(): void {
     // фикс утечки
     if (!this.playerHealthBar) {
       this.playerHealthBar = this.scene.add.graphics();
@@ -88,7 +90,7 @@ export class Player extends Entity {
   }
 
   // полоска хп - противника
-  private drawEnemyHealthBar(target) {
+  private drawEnemyHealthBar(target: Entity): void {
     if (!this.enemyHealthBar) {
       this.enemyHealthBar = this.scene.add.graphics();
       this.enemyHealthBar.setScrollFactor(0);
@@ -98,7 +100,12 @@ export class Player extends Entity {
   }
 
   // graphiscs - объект ресования Phaser
-  private drawHealtBar(graphics, x, y, percentage) {
+  private drawHealtBar(
+    graphics: Phaser.GameObjects.Graphics,
+    x: number,
+    y: number,
+    percentage: number
+  ): void {
     graphics.fillStyle(0x000000, 1);
     graphics.fillRect(x, y, 100, 10);
 
@@ -108,34 +115,40 @@ export class Player extends Entity {
   }
 
   // все враги на сцене
-  setEnemys(enemies: Entity[]) {
+  setEnemys(enemies: Entity[]): void {
     this.enemies = enemies;
   }
 
   // найти ближайщего моба к персонажу
-  private findTarget(enemies: Entity[]) {
-    // поиск крочайшего пути
-    let target = null;
-    let minDistance = Infinity;
+  private findTarget(enemies: Entity[] | undefined): Entity | null {
+    // Проверяем, есть ли враги
+    if (!enemies || enemies.length === 0) {
+      return null;
+    }
 
+    let closestEnemy: Entity | null = null;
+    let minDistance = Number.MAX_VALUE;
+
+    // Ищем ближайшего врага
     for (const enemy of enemies) {
-      const distanceToEnemy = Phaser.Math.Distance.Between(
+      const distance = Phaser.Math.Distance.Between(
         this.x,
         this.y,
         enemy.x,
         enemy.y
       );
 
-      if (distanceToEnemy < minDistance) {
-        minDistance = distanceToEnemy;
-        target = enemy;
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestEnemy = enemy;
       }
     }
-    return target;
+
+    return closestEnemy;
   }
 
   // атака на пробел
-  private setupKeyListeners() {
+  private setupKeyListeners(): void {
     this.scene.input.keyboard?.on("keydown-SPACE", () => {
       // Не позволяем новую атаку во время текущей
       if (this.isAttacking) return;
@@ -156,7 +169,7 @@ export class Player extends Entity {
     });
   }
 
-  attack(target: Entity) {
+  attack(target: Entity): void {
     // растояние до Entity
     const distanceToEnemy = Phaser.Math.Distance.Between(
       this.x,
@@ -170,7 +183,7 @@ export class Player extends Entity {
     }
   }
 
-  update(delta: number) {
+  update(delta: number): void {
     // Блокируем движение во время атаки
     if (this.isAttacking) return;
     const keys = this.scene.input.keyboard?.createCursorKeys();

@@ -20,7 +20,7 @@ export class Entity extends Phaser.Physics.Arcade.Sprite {
   }
 
   // получение урона
-  takeDamage(damage: number) {
+  takeDamage(damage: number): void {
     if (this.health > 0) {
       this.health -= damage;
     }

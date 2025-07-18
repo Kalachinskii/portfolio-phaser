@@ -1,3 +1,4 @@
+import type { Durotar } from "../scenes/durotar";
 import { Entity } from "./entity";
 
 export class Enemy extends Entity {
@@ -26,7 +27,7 @@ export class Enemy extends Entity {
   }
 
   // Цикличная анимация для свеньи
-  cycleTween() {
+  cycleTween(): void {
     this.scene.tweens.add({
       targets: this,
       //   продолжительность анимации
@@ -50,21 +51,21 @@ export class Enemy extends Entity {
     });
   }
 
-  setPlayer(player: Entity) {
+  setPlayer(player: Entity): void {
     this.player = player;
   }
 
-  stopCycleTween() {
+  stopCycleTween(): void {
     // удаляем анимации на объекте
     this.scene.tweens.killTweensOf(this);
   }
 
   // кто, за-кем, с какой скоростью
-  followToPlayer(player: Entity) {
+  followToPlayer(player: Entity): void {
     this.scene.physics.moveToObject(this, player, this.moveSpeed);
   }
 
-  returnToOriginalPosition(distanceToPosition: number) {
+  returnToOriginalPosition(distanceToPosition: number): void {
     // остановить персонажа
     this.setVelocity(0, 0);
     // передвижение
@@ -80,7 +81,7 @@ export class Enemy extends Entity {
   }
 
   // атака
-  attack(target: Entity) {
+  attack(target: Entity): void {
     const time = Math.floor(this.scene.game.loop.time);
     // переод атаки
     if (time % 2000 <= 3) {
@@ -89,7 +90,7 @@ export class Enemy extends Entity {
   }
 
   // переопределение получение урона у монстра
-  takeDamage(damage: number) {
+  takeDamage(damage: number): void {
     super.takeDamage(damage);
     // доступно т.к. есть у  родительского класса
     if (this.health <= 0) {
@@ -98,7 +99,7 @@ export class Enemy extends Entity {
   }
 
   // диактивация - монстр убит
-  deactivate() {
+  deactivate(): void {
     const scene = this.scene as Durotar;
     // остановим анимацию
     this.stopCycleTween();

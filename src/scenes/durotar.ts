@@ -7,8 +7,9 @@ export class Durotar extends Phaser.Scene {
   private player?: Player;
   private boar?: Enemy;
   private boarSecond?: Enemy;
+  // исправляем типизацию - временно, позже исправить
   killsCounter: number = 0;
-  killsText: Phaser.GameObjects.Text;
+  private killsText!: Phaser.GameObjects.Text;
 
   constructor() {
     // super("DurotarScene");
