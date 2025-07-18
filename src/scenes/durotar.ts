@@ -6,6 +6,7 @@ import { LAYERS, SIZES, SPRITES, TITLES } from "../utils/constants";
 export class Durotar extends Phaser.Scene {
   private player?: Player;
   private boar?: Enemy;
+  private boarSecond?: Enemy;
 
   constructor() {
     // super("DurotarScene");
@@ -55,6 +56,10 @@ export class Durotar extends Phaser.Scene {
     // добавить врага кабан
     // "boar" - ключ для загрузки текстуры - SPRITES.BOAR
     this.boar = new Enemy(this, 500, 250, SPRITES.BOAR.base);
+    // 2 кобанчик
+    this.boarSecond = new Enemy(this, 500, 350, SPRITES.BOAR.base);
+
+    this.player.setEnemys([this.boar, this.boarSecond]);
 
     // камера следует за игроком
     this.cameras.main.startFollow(this.player);
@@ -70,6 +75,7 @@ export class Durotar extends Phaser.Scene {
     }
 
     this.boar.setPlayer(this.player);
+    this.boarSecond.setPlayer(this.player);
 
     wallsLayer?.setCollisionByExclusion([-1]);
     // аналог но в диапазоне id, id виден при выборе элемента в Tiled
@@ -81,6 +87,7 @@ export class Durotar extends Phaser.Scene {
     // console.log(delta); частота обновления кадров
     this.player?.update(delta);
     this.boar?.update();
+    this.boarSecond?.update();
     // console.log(this.player?.health); // здоровье игрока видет
     // console.log(this.boar?.health); // здоровье свеньи видет
   }

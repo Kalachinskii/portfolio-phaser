@@ -2,9 +2,11 @@ import { SPRITES } from "../utils/constants";
 import { Entity } from "./entity";
 
 export class Player extends Entity {
-  textureKey: string;
   // скорость
   private moveSpeed: number;
+  textureKey: string;
+  enemies?: Entity[];
+
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
     super(scene, x, y, texture, SPRITES.PLAYER);
     // анимация движения в другие стороны
@@ -20,6 +22,7 @@ export class Player extends Entity {
     // уменьшить персонажа
     this.setScale(0.8);
 
+    this.setupKeyListeners();
     // как называеться наша анимация - формально
     anims.create({
       key: "down",
@@ -66,6 +69,59 @@ export class Player extends Entity {
       repeat: -1,
     });
   }
+
+  // все враги на сцене
+  setEnemys(enemies: Entity[]) {
+    this.enemies = enemies;
+  }
+
+  // найти ближайщего моба к персонажу
+  private findTarget(enemies: Entity[]) {
+    // поиск крочайшего пути
+    let target = null;
+    let minDistance = Infinity;
+
+    for (const enemy of enemies) {
+      const distanceToEnemy = Phaser.Math.Distance.Between(
+        this.x,
+        this.y,
+        enemy.x,
+        enemy.y
+      );
+
+      if (distanceToEnemy < minDistance) {
+        minDistance = distanceToEnemy;
+        target = enemy;
+      }
+    }
+    return target;
+  }
+
+  // атака на пробел
+  private setupKeyListeners() {
+    this.scene.input.keyboard?.on("keydown-SPACE", () => {
+      const target = this.findTarget(this.enemies);
+      console.log(target);
+
+      // таргет получить можно как в enemy через setTarget подобно setPlayer - но врагом может быть множество
+      this.attack(target);
+    });
+  }
+
+  attack(target: Entity) {
+    // растояние до Entity
+    const distanceToEnemy = Phaser.Math.Distance.Between(
+      this.x,
+      this.y,
+      target.x,
+      target.y
+    );
+
+    if (distanceToEnemy < 50) {
+      target.takeDamage(25);
+    }
+  }
+
   update(delta: number) {
     const keys = this.scene.input.keyboard?.createCursorKeys();
 
