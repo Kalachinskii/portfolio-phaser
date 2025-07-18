@@ -77,17 +77,23 @@ export class Player extends Entity {
 
   // полоска хп - героя
   private drawPlayerHealthBar() {
-    this.playerHealthBar = this.scene.add.graphics();
-    //
-    this.playerHealthBar.setScrollFactor(0);
+    // фикс утечки
+    if (!this.playerHealthBar) {
+      this.playerHealthBar = this.scene.add.graphics();
+      this.playerHealthBar.setScrollFactor(0);
+    }
+    // очистка
+    this.playerHealthBar.clear();
     this.drawHealtBar(this.playerHealthBar, 10, 10, this.health / 100);
   }
 
   // полоска хп - противника
   private drawEnemyHealthBar(target) {
-    this.enemyHealthBar = this.scene.add.graphics();
-    this.enemyHealthBar.setScrollFactor(0);
-
+    if (!this.enemyHealthBar) {
+      this.enemyHealthBar = this.scene.add.graphics();
+      this.enemyHealthBar.setScrollFactor(0);
+    }
+    this.enemyHealthBar.clear();
     this.drawHealtBar(this.enemyHealthBar, 10, 30, target.health / 100);
   }
 

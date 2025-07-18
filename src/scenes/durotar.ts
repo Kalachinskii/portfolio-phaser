@@ -102,6 +102,8 @@ export class Durotar extends Phaser.Scene {
 
   // реализация анимаций, действий на клавиши
   update(_: number, delta: number) {
+    // fix бага с полоской - обновить до целочисленного числа при смещении камеры
+    this.cameras.main.roundPixels = true;
     // console.log(delta); частота обновления кадров
     this.player?.update(delta);
     this.boar?.update();
