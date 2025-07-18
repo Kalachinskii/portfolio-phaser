@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import Phaser, { Scene } from "phaser";
+import Phaser from "phaser";
 import { scenes } from "../scenes";
 
 export function Home() {

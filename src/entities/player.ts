@@ -25,7 +25,7 @@ export class Player extends Entity {
     const animsFrameRate = 9;
     // ключ для понимания какую анимацию делать
     this.textureKey = texture.base;
-    this.moveSpeed = 50;
+    this.moveSpeed = 25;
     // уменьшение фиизческой оболочки под макет героя
     this.setSize(28, 32);
     this.setOffset(10, 16);
