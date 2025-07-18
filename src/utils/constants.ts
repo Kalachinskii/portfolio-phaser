@@ -23,7 +23,10 @@ export const LAYERS = {
 };
 
 export const SPRITES = {
-  PLAYER: "Player",
+  PLAYER: {
+    base: "Player",
+    fight: "Fight",
+  },
   BOAR: {
     // состояния врага - разные анимации
     base: "Boar",

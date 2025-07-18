@@ -10,7 +10,7 @@ export class Durotar extends Phaser.Scene {
 
   constructor() {
     // super("DurotarScene");
-    super("ElwynForestScene");
+    super("DurotarScene");
   }
 
   // предзагрузка
@@ -18,7 +18,7 @@ export class Durotar extends Phaser.Scene {
     this.load.image(TITLES.NAME_MAP, "src/assets/b.png");
     this.load.tilemapTiledJSON("map", "src/assets/test.json");
     this.load.spritesheet(
-      SPRITES.PLAYER,
+      SPRITES.PLAYER.base,
       "src/assets/characters/alliance.png",
       {
         frameWidth: SIZES.PLAYER.WIDTH,
@@ -30,6 +30,16 @@ export class Durotar extends Phaser.Scene {
       frameWidth: SIZES.BOAR.WIDTH,
       frameHeight: SIZES.BOAR.HEIGHT,
     });
+
+    // загрузка анимации боя
+    this.load.spritesheet(
+      SPRITES.PLAYER.fight,
+      "src/assets/characters/alliance-fight-small.png",
+      {
+        frameWidth: SIZES.PLAYER.WIDTH,
+        frameHeight: SIZES.PLAYER.HEIGHT,
+      }
+    );
   }
 
   // создание определенных моментов

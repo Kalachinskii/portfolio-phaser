@@ -1,20 +1,28 @@
 import { SPRITES } from "../utils/constants";
 import { Entity } from "./entity";
 
+type SpriteType = {
+  [key: string]: string;
+  base: string;
+  fight: string;
+};
+
 export class Player extends Entity {
   // скорость
   private moveSpeed: number;
   textureKey: string;
   enemies?: Entity[];
+  target: any;
+  private isAttacking: boolean = false;
 
-  constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
-    super(scene, x, y, texture, SPRITES.PLAYER);
+  constructor(scene: Phaser.Scene, x: number, y: number, texture: SpriteType) {
+    super(scene, x, y, texture.base, SPRITES.PLAYER.base);
     // анимация движения в другие стороны
     const anims = this.scene.anims;
     // кратное 3 т.к. 3 кадра у нашего героя, 3 медлено -> 9
     const animsFrameRate = 9;
     // ключ для понимания какую анимацию делать
-    this.textureKey = texture;
+    this.textureKey = texture.base;
     this.moveSpeed = 50;
     // уменьшение фиизческой оболочки под макет героя
     this.setSize(28, 32);
@@ -24,10 +32,24 @@ export class Player extends Entity {
 
     this.setupKeyListeners();
     // как называеться наша анимация - формально
-    this.createAnimation("down", texture, 0, 2, anims, animsFrameRate);
-    this.createAnimation("left", texture, 12, 14, anims, animsFrameRate);
-    this.createAnimation("right", texture, 24, 26, anims, animsFrameRate);
-    this.createAnimation("up", texture, 36, 38, anims, animsFrameRate);
+    this.createAnimation("down", texture.base, 0, 2, anims, animsFrameRate);
+    this.createAnimation("left", texture.base, 12, 14, anims, animsFrameRate);
+    this.createAnimation("right", texture.base, 24, 26, anims, animsFrameRate);
+    this.createAnimation("up", texture.base, 36, 38, anims, animsFrameRate);
+    // анимация боя
+    this.createAnimation(
+      "fight",
+      texture.fight,
+      3,
+      6,
+      anims,
+      animsFrameRate,
+      0
+    );
+
+    this.on("animationcomplete", () => {
+      this.isAttacking = false;
+    });
   }
 
   private createAnimation(
@@ -81,11 +103,20 @@ export class Player extends Entity {
   // атака на пробел
   private setupKeyListeners() {
     this.scene.input.keyboard?.on("keydown-SPACE", () => {
-      const target = this.findTarget(this.enemies);
-      console.log(target);
+      // Не позволяем новую атаку во время текущей
+      if (this.isAttacking) return;
 
-      // таргет получить можно как в enemy через setTarget подобно setPlayer - но врагом может быть множество
-      this.attack(target);
+      const target = this.findTarget(this.enemies);
+      if (!target) return;
+
+      this.isAttacking = true;
+      this.play("fight");
+      this.setVelocity(0, 0);
+
+      // Атакуем в середине анимации
+      this.scene.time.delayedCall(300, () => {
+        this.attack(target);
+      });
     });
   }
 
@@ -104,6 +135,8 @@ export class Player extends Entity {
   }
 
   update(delta: number) {
+    // Блокируем движение во время атаки
+    if (this.isAttacking) return;
     const keys = this.scene.input.keyboard?.createCursorKeys();
 
     // надо обновить в цикле сцены в durotar.ts
