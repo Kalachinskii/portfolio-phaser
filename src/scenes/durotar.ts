@@ -7,6 +7,8 @@ export class Durotar extends Phaser.Scene {
   private player?: Player;
   private boar?: Enemy;
   private boarSecond?: Enemy;
+  killsCounter: number = 0;
+  killsText: Phaser.GameObjects.Text;
 
   constructor() {
     // super("DurotarScene");
@@ -90,6 +92,12 @@ export class Durotar extends Phaser.Scene {
     wallsLayer?.setCollisionByExclusion([-1]);
     // аналог но в диапазоне id, id виден при выборе элемента в Tiled
     // wallsLayer?.setCollisionBetween(5,24);
+    this.killsText = this.add.text(770, 10, `${this.killsCounter}`, {
+      fontFamily: "Arial",
+      fontSize: 16,
+      color: "#ffffff",
+    });
+    this.killsText.setScrollFactor(0);
   }
 
   // реализация анимаций, действий на клавиши
@@ -100,5 +108,6 @@ export class Durotar extends Phaser.Scene {
     this.boarSecond?.update();
     // console.log(this.player?.health); // здоровье игрока видет
     // console.log(this.boar?.health); // здоровье свеньи видет
+    this.killsText.setText(`${this.killsCounter}`);
   }
 }

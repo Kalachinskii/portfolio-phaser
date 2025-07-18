@@ -99,6 +99,7 @@ export class Enemy extends Entity {
 
   // диактивация - монстр убит
   deactivate() {
+    const scene = this.scene as Durotar;
     // остановим анимацию
     this.stopCycleTween();
     // сохранить позицию
@@ -109,6 +110,8 @@ export class Enemy extends Entity {
     this.isAlive = false;
     // удаление противника с карты
     this.destroy();
+    // передача переменной через объект сцены (такое себе)
+    scene.killsCounter += 1;
   }
 
   // расчитываем дистанцию до персонажа
