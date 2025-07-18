@@ -186,33 +186,40 @@ export class Player extends Entity {
   update(delta: number): void {
     // Блокируем движение во время атаки
     if (this.isAttacking) return;
+
+    // Получаем ссылку на объект управления с клавиатуры
     const keys = this.scene.input.keyboard?.createCursorKeys();
     // перерисовка хп
     this.drawPlayerHealthBar();
 
-    // надо обновить в цикле сцены в durotar.ts
-    // скорость перемещение игрока
-    if (keys?.up.isDown) {
-      // запуск анимации , true - не воспроизводи другие
+    const direction = new Phaser.Math.Vector2(0, 0);
+
+    if (keys?.up.isDown) direction.y -= 1;
+    if (keys?.down.isDown) direction.y += 1;
+    if (keys?.left.isDown) direction.x -= 1;
+    if (keys?.right.isDown) direction.x += 1;
+
+    // Нормализуем вектор (чтобы диагональная скорость не была больше)
+    // Проверяем, есть ли движение (длина вектора > 0)
+    if (direction.length() > 0) {
+      // Проверяем, есть ли движение (длина вектора > 0) чтобы диагональное движение не было быстрее движения по осям
+      direction.normalize();
+    }
+
+    // расчёт движеня х - y
+    const speed = delta * this.moveSpeed;
+    this.setVelocity(direction.x * speed, direction.y * speed);
+
+    // Выбор анимации движения
+    if (direction.y < 0) {
       this.play("up", true);
-      // передвижение спрайта (не физика! проходит стены)
-      // this.setPosition(this.x, this.y - delta * 0.25);
-      this.setVelocity(0, -delta * this.moveSpeed);
-    } else if (keys?.down.isDown) {
+    } else if (direction.y > 0) {
       this.play("down", true);
-      // this.setPosition(this.x, this.y + delta * 0.25);
-      this.setVelocity(0, delta * this.moveSpeed);
-    } else if (keys?.left.isDown) {
+    } else if (direction.x < 0) {
       this.play("left", true);
-      // this.setPosition(this.x - delta * 0.25, this.y);
-      this.setVelocity(-delta * this.moveSpeed, 0);
-    } else if (keys?.right.isDown) {
+    } else if (direction.x > 0) {
       this.play("right", true);
-      // this.setPosition(this.x + delta * 0.25, this.y);
-      this.setVelocity(delta * this.moveSpeed, 0);
     } else {
-      // остановка персонажа при отпускании кнопки
-      this.setVelocity(0, 0);
       this.stop();
     }
   }

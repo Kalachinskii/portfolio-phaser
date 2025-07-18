@@ -29,7 +29,7 @@ export function Home() {
         default: "arcade",
         arcade: {
           // режим дебага - обветка персонажа вид границ
-          debug: true,
+          // debug: true,
         },
       },
       scale: {
