@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useGame } from "../config/useConfig";
+import { useGame } from "../config/useGame";
 
 export function Home() {
   const { locationId } = useParams();
