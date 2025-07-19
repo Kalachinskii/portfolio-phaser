@@ -6,10 +6,6 @@ export class Home extends Phaser.Scene {
   private player?: Player;
   killsCounter: number = 0;
   private killsText!: Phaser.GameObjects.Text;
-  private onNavigate?: (path: string) => void;
-  public setNavigationHandler(callback: (path: string) => void) {
-    this.onNavigate = callback;
-  }
 
   constructor() {
     super("Home");
@@ -60,8 +56,8 @@ export class Home extends Phaser.Scene {
     }
 
     // слои 1 и 2
-    const earthGrass = map.createLayer(LAYERS.ONE_LAYER, tileset, 0, 0);
-    const bushesFlowers = map.createLayer(LAYERS.TWO_LAYER, tileset, 0, 0);
+    map.createLayer(LAYERS.ONE_LAYER, tileset, 0, 0);
+    map.createLayer(LAYERS.TWO_LAYER, tileset, 0, 0);
     // 3(непроходимый)
     const impassable = map.createLayer(LAYERS.THREE_LAYER, tileset, 0, 0);
 

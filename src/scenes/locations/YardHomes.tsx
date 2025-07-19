@@ -8,7 +8,6 @@ export class YardHomes extends Phaser.Scene {
   private enemies: Enemy[] = [];
   private killsCounter = 0;
   private killsText!: Phaser.GameObjects.Text;
-  private onNavigate?: (path: string) => void;
   private doorHintText?: Phaser.GameObjects.Text;
   private doorTile: Phaser.Tilemaps.Tile | null = null;
   private map?: Phaser.Tilemaps.Tilemap;
