@@ -1,4 +1,4 @@
-import testJSON from "../../assets/test.json";
+import yardJSON from "../../assets/maps/yard.json";
 import { Enemy } from "../../entities/enemy";
 import { Player } from "../../entities/player";
 import { LAYERS, SIZES, SPRITES, TITLES } from "../../utils/constants";
@@ -42,7 +42,7 @@ export class YardHomes extends Base {
     // Оптимизированная загрузка ресурсов
     const { load } = this;
     load.image(TITLES.NAME_MAP, "src/assets/sprites.png");
-    load.tilemapTiledJSON("map", "src/assets/test.json");
+    load.tilemapTiledJSON("map", "src/assets/maps/yard.json");
 
     // Загрузка спрайтов через цикл
     const spritesToLoad = [
@@ -65,7 +65,7 @@ export class YardHomes extends Base {
   create() {
     this.map = this.make.tilemap({ key: "map" });
     const tileset = this.map.addTilesetImage(
-      testJSON.tilesets[0].name,
+      yardJSON.tilesets[0].name,
       TITLES.NAME_MAP,
       SIZES.TILE,
       SIZES.TILE

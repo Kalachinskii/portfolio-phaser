@@ -16,6 +16,12 @@ export class Player extends Entity {
   private isAttacking: boolean = false;
   private playerHealthBar: Phaser.GameObjects.Graphics | null = null;
   private enemyHealthBar: Phaser.GameObjects.Graphics | null = null;
+  private keys: {
+    W: Phaser.Input.Keyboard.Key;
+    A: Phaser.Input.Keyboard.Key;
+    S: Phaser.Input.Keyboard.Key;
+    D: Phaser.Input.Keyboard.Key;
+  };
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: SpriteType) {
     super(scene, x, y, texture.base, SPRITES.PLAYER.base);
@@ -38,6 +44,17 @@ export class Player extends Entity {
     this.createAnimation("left", texture.base, 12, 14, anims, animsFrameRate);
     this.createAnimation("right", texture.base, 24, 26, anims, animsFrameRate);
     this.createAnimation("up", texture.base, 36, 38, anims, animsFrameRate);
+
+    if (!scene.input.keyboard) {
+      throw new Error("Keyboard input not available");
+    }
+
+    this.keys = {
+      W: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
+      A: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
+      S: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
+      D: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D),
+    };
 
     this.drawPlayerHealthBar();
     // анимация боя
@@ -198,6 +215,10 @@ export class Player extends Entity {
     if (keys?.down.isDown) direction.y += 1;
     if (keys?.left.isDown) direction.x -= 1;
     if (keys?.right.isDown) direction.x += 1;
+    if (this.keys.W.isDown) direction.y -= 1;
+    if (this.keys.S.isDown) direction.y += 1;
+    if (this.keys.A.isDown) direction.x -= 1;
+    if (this.keys.D.isDown) direction.x += 1;
 
     // Нормализуем вектор (чтобы диагональная скорость не была больше)
     // Проверяем, есть ли движение (длина вектора > 0)

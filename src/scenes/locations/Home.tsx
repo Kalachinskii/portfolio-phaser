@@ -1,49 +1,62 @@
 import homeJSON from "../../assets/maps/home.json";
+import type { Enemy } from "../../entities/enemy";
 import { Player } from "../../entities/player";
 import { LAYERS, SIZES, SPRITES, TITLES } from "../../utils/constants";
+import { Base } from "./Base";
 
-export class Home extends Phaser.Scene {
+export class Home extends Base {
   private player?: Player;
-  killsCounter: number = 0;
-  private killsText!: Phaser.GameObjects.Text;
+  private map?: Phaser.Tilemaps.Tilemap;
+  private doorTile: Phaser.Tilemaps.Tile | null = null;
+  private enemies: Enemy[] = [];
 
   constructor() {
     super("Home");
   }
 
-  // предзагрузка
   preload() {
-    this.load.on("loaderror", (file: any) => {
-      console.error("Failed to load:", file.key);
-    });
-
     this.load.image(TITLES.NAME_MAP_HOME, "src/assets/sprites.png");
     this.load.tilemapTiledJSON("map", "src/assets/maps/home.json");
-    this.load.spritesheet(
-      SPRITES.PLAYER.base,
-      "src/assets/characters/alliance.png",
-      {
-        frameWidth: SIZES.PLAYER.WIDTH,
-        frameHeight: SIZES.PLAYER.HEIGHT,
-      }
-    );
 
-    // загрузка анимации боя
-    this.load.spritesheet(
-      SPRITES.PLAYER.fight,
-      "src/assets/characters/alliance-fight-small.png",
+    // Загрузка спрайтов через цикл
+    const spritesToLoad = [
+      { key: SPRITES.PLAYER.base, path: "src/assets/characters/alliance.png" },
       {
-        frameWidth: SIZES.PLAYER.WIDTH,
-        frameHeight: SIZES.PLAYER.HEIGHT,
-      }
-    );
+        key: SPRITES.PLAYER.fight,
+        path: "src/assets/characters/alliance-fight-small.png",
+      },
+    ];
+
+    spritesToLoad.forEach(({ key, path }) => {
+      this.load.spritesheet(key, path, {
+        frameWidth: SIZES[key.includes("BOAR") ? "BOAR" : "PLAYER"].WIDTH,
+        frameHeight: SIZES[key.includes("BOAR") ? "BOAR" : "PLAYER"].HEIGHT,
+      });
+    });
   }
 
-  // создание определенных моментов
+  private setupPlayerAndEnemies() {
+    if (!this.map) return;
+
+    this.player = new Player(this, 690, 580, SPRITES.PLAYER);
+
+    // Настройка камеры и физики
+    this.cameras.main
+      .startFollow(this.player)
+      .setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+
+    this.physics.world.setBounds(
+      0,
+      0,
+      this.map.widthInPixels,
+      this.map.heightInPixels
+    );
+    this.player.setCollideWorldBounds(true);
+  }
+
   create() {
-    const map = this.make.tilemap({ key: "map" });
-    // addTilesetImage(name из json файла talses->name)
-    const tileset = map.addTilesetImage(
+    this.map = this.make.tilemap({ key: "map" });
+    const tileset = this.map.addTilesetImage(
       homeJSON.tilesets[0].name,
       TITLES.NAME_MAP_HOME,
       SIZES.TILE,
@@ -55,40 +68,52 @@ export class Home extends Phaser.Scene {
       return;
     }
 
-    // слои 1 и 2
-    map.createLayer(LAYERS.ONE_LAYER, tileset, 0, 0);
-    map.createLayer(LAYERS.TWO_LAYER, tileset, 0, 0);
-    // 3(непроходимый)
-    const impassable = map.createLayer(LAYERS.THREE_LAYER, tileset, 0, 0);
+    // Создаем слои карты
+    [
+      LAYERS.ONE_LAYER,
+      LAYERS.TWO_LAYER,
+      LAYERS.THREE_LAYER,
+      LAYERS.DOOR,
+    ].forEach((layer) => {
+      this.map?.createLayer(layer, tileset, 0, 0);
+    });
 
-    this.player = new Player(this, 690, 580, SPRITES.PLAYER);
+    this.doorTile = this.map.findTile((tile) => tile.index === 3365);
+    // расположение точки клика, сцена, куда перенаправить
+    this.doorTile &&
+      this.setupDoorInteraction(this.doorTile, this.map, "/street");
+    this.setupPlayerAndEnemies();
 
-    // камера следует за игроком
-    this.cameras.main.startFollow(this.player);
-    // камера не уйдет за края карты
-    this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-    // физика для мира что-бы не выйти за рамки экрана
-    this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-    // запрет на выход за рамки мира
-    this.player.setCollideWorldBounds(true);
-
-    // непроходимые текстуры
-    if (impassable) {
+    // Настройка коллизий
+    const impassable = this.map.getLayer(LAYERS.THREE_LAYER)?.tilemapLayer;
+    if (impassable && this.player) {
       this.physics.add.collider(this.player, impassable);
-      impassable?.setCollisionByExclusion([-1]);
+      impassable.setCollisionByExclusion([-1]);
     }
 
-    this.killsText = this.add.text(770, 10, `${this.killsCounter}`, {
-      fontFamily: "Arial",
-      fontSize: 16,
-      color: "#ffffff",
-    });
-    this.killsText.setScrollFactor(0);
+    // да игрок существует !
+    this.enemies.forEach((enemy) => enemy.setPlayer(this.player!));
   }
 
   update(_: number, delta: number) {
     this.cameras.main.roundPixels = true;
     this.player?.update(delta);
-    this.killsText.setText(`${this.killsCounter}`);
+
+    // Управление отображением подсказки
+    if (this.doorTile && this.player && this.map && this.doorHintText) {
+      const doorCenterX = this.doorTile.pixelX + this.map.tileWidth / 2;
+      const doorCenterY = this.doorTile.pixelY + this.map.tileHeight / 2;
+
+      const distance = Phaser.Math.Distance.Between(
+        this.player.x,
+        this.player.y,
+        doorCenterX,
+        doorCenterY
+      );
+
+      this.doorInteractionAllowed = distance < 50;
+
+      this.doorHintText.setVisible(distance < 50);
+    }
   }
 }

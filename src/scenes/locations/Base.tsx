@@ -8,7 +8,8 @@ export abstract class Base extends Phaser.Scene {
     const warning = this.createDoorHintText(
       this.cameras.main.centerX,
       this.cameras.main.centerY - 50,
-      "#ff0000"
+      "#ff0000",
+      "Далековато"
     );
     this.time.delayedCall(2000, () => warning.destroy());
   }
@@ -28,7 +29,8 @@ export abstract class Base extends Phaser.Scene {
   protected setupDoorInteraction(
     doorTile: Phaser.Tilemaps.Tile,
     map: Phaser.Tilemaps.Tilemap,
-    navigatePath: string = "/"
+    navigatePath: string = "/",
+    text: string = "Кликните по двери чтобы войти"
   ) {
     if (!doorTile || !map) return;
 
@@ -48,7 +50,8 @@ export abstract class Base extends Phaser.Scene {
     this.doorHintText = this.createDoorHintText(
       pixelX + tileWidth / 2,
       pixelY - 20,
-      "#ffffff"
+      "#ffffff",
+      text
     );
 
     doorZone.on("pointerdown", () => {
@@ -65,7 +68,7 @@ export abstract class Base extends Phaser.Scene {
     x: number,
     y: number,
     color: string,
-    text: string = "Кликните по двери чтобы войти"
+    text: string
   ): Phaser.GameObjects.Text {
     return this.add
       .text(x, y, text, {
