@@ -30,7 +30,7 @@ export abstract class Base extends Phaser.Scene {
     doorTile: Phaser.Tilemaps.Tile,
     map: Phaser.Tilemaps.Tilemap,
     navigatePath: string = "/",
-    text: string = "Кликните по двери чтобы войти"
+    text: string = `Кликни чтобы ${navigatePath == "/" ? "войти" : "выйти"}`
   ) {
     if (!doorTile || !map) return;
 
