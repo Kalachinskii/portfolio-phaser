@@ -5,54 +5,123 @@ import { LAYERS, SIZES, SPRITES, TITLES } from "../../utils/constants";
 
 export class YardHomes extends Phaser.Scene {
   private player?: Player;
-  private boar?: Enemy;
-  private boarSecond?: Enemy;
-  // исправляем типизацию - временно, позже исправить
-  killsCounter: number = 0;
+  private enemies: Enemy[] = [];
+  private killsCounter = 0;
   private killsText!: Phaser.GameObjects.Text;
   private onNavigate?: (path: string) => void;
-  public setNavigationHandler(callback: (path: string) => void) {
-    this.onNavigate = callback;
-  }
+  private doorHintText?: Phaser.GameObjects.Text;
+  private doorTile: Phaser.Tilemaps.Tile | null = null;
+  private map?: Phaser.Tilemaps.Tilemap;
 
   constructor() {
     super("YardHomes");
   }
 
-  // предзагрузка
   preload() {
-    this.load.image(TITLES.NAME_MAP, "src/assets/sprites.png");
-    this.load.tilemapTiledJSON("map", "src/assets/test.json");
-    this.load.spritesheet(
-      SPRITES.PLAYER.base,
-      "src/assets/characters/alliance.png",
-      {
-        frameWidth: SIZES.PLAYER.WIDTH,
-        frameHeight: SIZES.PLAYER.HEIGHT,
-      }
-    );
-    // загрузка картинки свеньи
-    this.load.spritesheet(SPRITES.BOAR.base, "src/assets/characters/boar.png", {
-      frameWidth: SIZES.BOAR.WIDTH,
-      frameHeight: SIZES.BOAR.HEIGHT,
-    });
+    // Оптимизированная загрузка ресурсов
+    const { load } = this;
+    load.image(TITLES.NAME_MAP, "src/assets/sprites.png");
+    load.tilemapTiledJSON("map", "src/assets/test.json");
 
-    // загрузка анимации боя
-    this.load.spritesheet(
-      SPRITES.PLAYER.fight,
-      "src/assets/characters/alliance-fight-small.png",
+    // Загрузка спрайтов через цикл
+    const spritesToLoad = [
+      { key: SPRITES.PLAYER.base, path: "src/assets/characters/alliance.png" },
+      { key: SPRITES.BOAR.base, path: "src/assets/characters/boar.png" },
       {
-        frameWidth: SIZES.PLAYER.WIDTH,
-        frameHeight: SIZES.PLAYER.HEIGHT,
-      }
-    );
+        key: SPRITES.PLAYER.fight,
+        path: "src/assets/characters/alliance-fight-small.png",
+      },
+    ];
+
+    spritesToLoad.forEach(({ key, path }) => {
+      load.spritesheet(key, path, {
+        frameWidth: SIZES[key.includes("BOAR") ? "BOAR" : "PLAYER"].WIDTH,
+        frameHeight: SIZES[key.includes("BOAR") ? "BOAR" : "PLAYER"].HEIGHT,
+      });
+    });
   }
 
-  // создание определенных моментов
+  private setupDoorInteraction() {
+    if (!this.doorTile || !this.map) return;
+
+    const { tileWidth, tileHeight } = this.map;
+    const { pixelX, pixelY } = this.doorTile;
+
+    // Создаем зону взаимодействия
+    const doorZone = this.add
+      .zone(
+        pixelX + tileWidth / 2,
+        pixelY + tileHeight / 2,
+        tileWidth * 2,
+        tileHeight * 3
+      )
+      .setOrigin(0.5);
+
+    doorZone.setInteractive({ useHandCursor: true });
+
+    // Создаем текстовую подсказку
+    this.doorHintText = this.createDoorHintText(
+      pixelX + tileWidth / 2,
+      pixelY - 20
+    );
+
+    doorZone.on("pointerdown", () => {
+      this.game.events.emit("navigate", "/");
+    });
+  }
+
+  private createDoorHintText(x: number, y: number): Phaser.GameObjects.Text {
+    return this.add
+      .text(x, y, "Кликните по двери чтобы войти", {
+        font: "16px Arial",
+        color: "#ffffff",
+        backgroundColor: "#333333",
+        padding: { x: 10, y: 5 },
+        align: "center",
+      })
+      .setOrigin(0.5)
+      .setDepth(1000)
+      .setVisible(false)
+      .setScrollFactor(0);
+  }
+
+  private setupPlayerAndEnemies() {
+    if (!this.map) return;
+
+    this.player = new Player(this, 280, 180, SPRITES.PLAYER);
+    this.enemies = [
+      new Enemy(this, 500, 240, SPRITES.BOAR.base),
+      new Enemy(this, 500, 375, SPRITES.BOAR.base),
+    ];
+    this.player.setEnemys(this.enemies);
+
+    // Настройка камеры и физики
+    this.cameras.main
+      .startFollow(this.player)
+      .setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+
+    this.physics.world.setBounds(
+      0,
+      0,
+      this.map.widthInPixels,
+      this.map.heightInPixels
+    );
+    this.player.setCollideWorldBounds(true);
+  }
+
+  private setupKillsCounter() {
+    this.killsText = this.add
+      .text(770, 10, `${this.killsCounter}`, {
+        fontFamily: "Arial",
+        fontSize: 16,
+        color: "#ffffff",
+      })
+      .setScrollFactor(0);
+  }
+
   create() {
-    const map = this.make.tilemap({ key: "map" });
-    // addTilesetImage(name из json файла talses->name)
-    const tileset = map.addTilesetImage(
+    this.map = this.make.tilemap({ key: "map" });
+    const tileset = this.map.addTilesetImage(
       testJSON.tilesets[0].name,
       TITLES.NAME_MAP,
       SIZES.TILE,
@@ -64,83 +133,51 @@ export class YardHomes extends Phaser.Scene {
       return;
     }
 
-    // слои 1 и 2
-    const earthGrass = map.createLayer(LAYERS.ONE_LAYER, tileset, 0, 0);
-    const bushesFlowers = map.createLayer(LAYERS.TWO_LAYER, tileset, 0, 0);
-    // 3(непроходимый)
-    const impassable = map.createLayer(LAYERS.THREE_LAYER, tileset, 0, 0);
-    // дверь-улица
-    const doorLayer = map.createLayer(LAYERS.DOOR, tileset, 0, 0);
-    // Находим координаты двери (если знаем конкретный тайл)
-    const doorTile = map.findTile((tile) => tile.index === 1808);
-
-    // навигация при клике на низ двери
-    if (doorTile) {
-      const tileWidth = map.tileWidth;
-      const tileHeight = map.tileHeight;
-
-      const doorZone = this.add
-        .zone(
-          doorTile.pixelX + tileWidth / 2,
-          doorTile.pixelY + tileHeight / 2,
-          tileWidth,
-          tileHeight
-        )
-        .setOrigin(0.5);
-
-      doorZone.setInteractive();
-
-      doorZone.on("pointerdown", () => {
-        // Отправляем событие навигации
-        this.game.events.emit("navigate", "/");
-      });
-    }
-
-    // класс сцены, кардинаты, текстурный ключ из прелоад
-    this.player = new Player(this, 280, 180, SPRITES.PLAYER);
-    // добавить врага кабан
-    // "boar" - ключ для загрузки текстуры - SPRITES.BOAR
-    this.boar = new Enemy(this, 500, 240, SPRITES.BOAR.base);
-    // 2 кобанчик
-    this.boarSecond = new Enemy(this, 500, 375, SPRITES.BOAR.base);
-
-    this.player.setEnemys([this.boar, this.boarSecond]);
-
-    // камера следует за игроком
-    this.cameras.main.startFollow(this.player);
-    // камера не уйдет за края карты
-    this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-    // физика для мира что-бы не выйти за рамки экрана
-    this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-    // запрет на выход за рамки мира
-    this.player.setCollideWorldBounds(true);
-    // запрет на объекты wallsLayer - слой со стенами
-    if (impassable) {
-      this.physics.add.collider(this.player, impassable);
-    }
-
-    this.boar.setPlayer(this.player);
-    this.boarSecond.setPlayer(this.player);
-
-    impassable?.setCollisionByExclusion([-1]);
-    // аналог но в диапазоне id, id виден при выборе элемента в Tiled
-    // wallsLayer?.setCollisionBetween(5,24);
-    this.killsText = this.add.text(770, 10, `${this.killsCounter}`, {
-      fontFamily: "Arial",
-      fontSize: 16,
-      color: "#ffffff",
+    // Создаем слои карты
+    [
+      LAYERS.ONE_LAYER,
+      LAYERS.TWO_LAYER,
+      LAYERS.THREE_LAYER,
+      LAYERS.DOOR,
+    ].forEach((layer) => {
+      this.map?.createLayer(layer, tileset, 0, 0);
     });
-    this.killsText.setScrollFactor(0);
+
+    this.doorTile = this.map.findTile((tile) => tile.index === 1808);
+    this.setupDoorInteraction();
+    this.setupPlayerAndEnemies();
+    this.setupKillsCounter();
+
+    // Настройка коллизий
+    const impassable = this.map.getLayer(LAYERS.THREE_LAYER)?.tilemapLayer;
+    if (impassable && this.player) {
+      this.physics.add.collider(this.player, impassable);
+      impassable.setCollisionByExclusion([-1]);
+    }
+
+    // да игрок существует !
+    this.enemies.forEach((enemy) => enemy.setPlayer(this.player!));
   }
 
-  // реализация анимаций, действий на клавиши
   update(_: number, delta: number) {
-    // fix бага с полоской - обновить до целочисленного числа при смещении камеры
     this.cameras.main.roundPixels = true;
-    // console.log(delta); частота обновления кадров
     this.player?.update(delta);
-    this.boar?.update();
-    this.boarSecond?.update();
+    this.enemies.forEach((enemy) => enemy.update());
     this.killsText.setText(`${this.killsCounter}`);
+
+    // Управление отображением подсказки
+    if (this.doorTile && this.player && this.map && this.doorHintText) {
+      const doorCenterX = this.doorTile.pixelX + this.map.tileWidth / 2;
+      const doorCenterY = this.doorTile.pixelY + this.map.tileHeight / 2;
+
+      const distance = Phaser.Math.Distance.Between(
+        this.player.x,
+        this.player.y,
+        doorCenterX,
+        doorCenterY
+      );
+
+      this.doorHintText.setVisible(distance < 50);
+    }
   }
 }
