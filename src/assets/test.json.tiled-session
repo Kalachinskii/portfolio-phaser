@@ -1,0 +1,29 @@
+{
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "test.json": {
+            "scale": 1,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 398,
+                "y": 182
+            }
+        },
+        "test.json#b": {
+            "scaleInDock": 1.5
+        }
+    },
+    "map.height": 40,
+    "map.width": 50,
+    "openFiles": [
+    ],
+    "project": "test.json.tiled-project",
+    "recentFiles": [
+        "test.json"
+    ]
+}

@@ -22,6 +22,7 @@ export const LAYERS = {
   ONE_LAYER: "1",
   TWO_LAYER: "2",
   THREE_LAYER: "3",
+  DOOR: "4",
 };
 
 export const SPRITES = {

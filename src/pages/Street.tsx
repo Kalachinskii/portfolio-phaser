@@ -1,7 +1,6 @@
 import { useGame } from "../config/useConfig";
 
-export function Home() {
-  // логика инициализации и управления игрой Phaser в React-компоненте.
+export function Street() {
   const { gameContainerRef } = useGame();
 
   return (

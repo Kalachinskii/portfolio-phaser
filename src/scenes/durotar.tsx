@@ -10,6 +10,10 @@ export class Durotar extends Phaser.Scene {
   // исправляем типизацию - временно, позже исправить
   killsCounter: number = 0;
   private killsText!: Phaser.GameObjects.Text;
+  private onNavigate?: (path: string) => void;
+  public setNavigationHandler(callback: (path: string) => void) {
+    this.onNavigate = callback;
+  }
 
   constructor() {
     // super("DurotarScene");
@@ -66,6 +70,32 @@ export class Durotar extends Phaser.Scene {
     const bushesFlowers = map.createLayer(LAYERS.TWO_LAYER, tileset, 0, 0);
     // 3(непроходимый)
     const impassable = map.createLayer(LAYERS.THREE_LAYER, tileset, 0, 0);
+    // дверь-улица
+    const doorLayer = map.createLayer(LAYERS.DOOR, tileset, 0, 0);
+    // Находим координаты двери (если знаем конкретный тайл)
+    const doorTile = map.findTile((tile) => tile.index === 1808);
+
+    if (doorTile) {
+      const tileWidth = map.tileWidth;
+      const tileHeight = map.tileHeight;
+
+      const doorZone = this.add
+        .zone(
+          doorTile.pixelX + tileWidth / 2,
+          doorTile.pixelY + tileHeight / 2,
+          tileWidth,
+          tileHeight
+        )
+        .setOrigin(0.5);
+
+      doorZone.setInteractive();
+
+      doorZone.on("pointerdown", () => {
+        // Отправляем событие навигации
+        this.game.events.emit("navigate", "/street");
+      });
+    }
+
     // класс сцены, кардинаты, текстурный ключ из прелоад
     this.player = new Player(this, 280, 180, SPRITES.PLAYER);
     // добавить врага кабан
