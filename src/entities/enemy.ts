@@ -1,4 +1,4 @@
-import type { Durotar } from "../scenes/durotar";
+import type { Durotar } from "../scenes/locations/YardHomes";
 import { Entity } from "./entity";
 
 export class Enemy extends Entity {

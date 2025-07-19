@@ -1,15 +1,17 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Phaser from "phaser";
-import { scenes } from "../scenes";
+import { createScenes } from "../scenes";
+// import { scenes } from "../scenes";
 
-export const useGame = () => {
+export const useGame = (location: string) => {
   const gameRef = useRef<Phaser.Game | null>(null);
   const gameContainerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!gameContainerRef.current || gameRef.current) return;
+    const scenes = createScenes(location);
 
     const config: Phaser.Types.Core.GameConfig = {
       width: 800,
@@ -43,7 +45,7 @@ export const useGame = () => {
       gameRef.current?.destroy(true);
       gameRef.current = null;
     };
-  }, [navigate]);
+  }, [location, navigate]);
 
   //  для привязки к DOM-элементу
   return { gameContainerRef };

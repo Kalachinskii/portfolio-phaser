@@ -1,9 +1,9 @@
-import testJSON from "../assets/test.json";
-import { Enemy } from "../entities/enemy";
-import { Player } from "../entities/player";
-import { LAYERS, SIZES, SPRITES, TITLES } from "../utils/constants";
+import testJSON from "../../assets/test.json";
+import { Enemy } from "../../entities/enemy";
+import { Player } from "../../entities/player";
+import { LAYERS, SIZES, SPRITES, TITLES } from "../../utils/constants";
 
-export class Durotar extends Phaser.Scene {
+export class YardHomes extends Phaser.Scene {
   private player?: Player;
   private boar?: Enemy;
   private boarSecond?: Enemy;
@@ -16,13 +16,12 @@ export class Durotar extends Phaser.Scene {
   }
 
   constructor() {
-    // super("DurotarScene");
-    super("DurotarScene");
+    super("YardHomes");
   }
 
   // предзагрузка
   preload() {
-    this.load.image(TITLES.NAME_MAP, "src/assets/b.png");
+    this.load.image(TITLES.NAME_MAP, "src/assets/sprites.png");
     this.load.tilemapTiledJSON("map", "src/assets/test.json");
     this.load.spritesheet(
       SPRITES.PLAYER.base,
@@ -75,6 +74,7 @@ export class Durotar extends Phaser.Scene {
     // Находим координаты двери (если знаем конкретный тайл)
     const doorTile = map.findTile((tile) => tile.index === 1808);
 
+    // навигация при клике на низ двери
     if (doorTile) {
       const tileWidth = map.tileWidth;
       const tileHeight = map.tileHeight;
@@ -141,8 +141,6 @@ export class Durotar extends Phaser.Scene {
     this.player?.update(delta);
     this.boar?.update();
     this.boarSecond?.update();
-    // console.log(this.player?.health); // здоровье игрока видет
-    // console.log(this.boar?.health); // здоровье свеньи видет
     this.killsText.setText(`${this.killsCounter}`);
   }
 }
