@@ -10,6 +10,8 @@ export class Enemy extends Entity {
   private isAlive: boolean;
   private moveSpeed: number;
   private initialPosition: { x: number; y: number };
+  private lastAttackTime: number = 0;
+  private attackCooldown: number = 2000;
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
     super(scene, x, y, texture);
@@ -82,10 +84,13 @@ export class Enemy extends Entity {
 
   // атака
   attack(target: Entity): void {
-    const time = Math.floor(this.scene.game.loop.time);
-    // переод атаки
-    if (time % 2000 <= 3) {
+    // текущее игровое время в миллисекундах
+    const currentTime = this.scene.game.loop.time;
+    // Проверяем, прошло ли достаточно времени с последней атаки
+    if (currentTime - this.lastAttackTime >= this.attackCooldown) {
       target.takeDamage(10);
+      // Обновляем время последней атаки
+      this.lastAttackTime = currentTime;
     }
   }
 
