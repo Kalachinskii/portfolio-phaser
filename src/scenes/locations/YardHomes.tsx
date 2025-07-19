@@ -92,7 +92,7 @@ export class YardHomes extends Phaser.Scene {
 
       doorZone.on("pointerdown", () => {
         // Отправляем событие навигации
-        this.game.events.emit("navigate", "/street");
+        this.game.events.emit("navigate", "/");
       });
     }
 

@@ -65,7 +65,7 @@ export class Home extends Phaser.Scene {
     // 3(непроходимый)
     const impassable = map.createLayer(LAYERS.THREE_LAYER, tileset, 0, 0);
 
-    this.player = new Player(this, 280, 180, SPRITES.PLAYER);
+    this.player = new Player(this, 690, 580, SPRITES.PLAYER);
 
     // камера следует за игроком
     this.cameras.main.startFollow(this.player);
