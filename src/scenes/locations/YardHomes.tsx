@@ -12,6 +12,7 @@ export class YardHomes extends Phaser.Scene {
   private doorHintText?: Phaser.GameObjects.Text;
   private doorTile: Phaser.Tilemaps.Tile | null = null;
   private map?: Phaser.Tilemaps.Tilemap;
+  private doorInteractionAllowed: boolean = true;
 
   constructor() {
     super("YardHomes");
@@ -66,7 +67,11 @@ export class YardHomes extends Phaser.Scene {
     );
 
     doorZone.on("pointerdown", () => {
-      this.game.events.emit("navigate", "/");
+      if (this.doorInteractionAllowed) {
+        this.game.events.emit("navigate", "/");
+      } else {
+        this.showDistanceWarning();
+      }
     });
   }
 
@@ -177,7 +182,28 @@ export class YardHomes extends Phaser.Scene {
         doorCenterY
       );
 
+      this.doorInteractionAllowed = distance < 50;
+
       this.doorHintText.setVisible(distance < 50);
     }
+  }
+
+  private showDistanceWarning() {
+    const warning = this.add
+      .text(
+        this.cameras.main.centerX,
+        this.cameras.main.centerY - 50,
+        "Подойдите ближе к двери!",
+        {
+          font: "20px Arial",
+          color: "#ff0000",
+          backgroundColor: "#333333",
+          padding: { x: 10, y: 5 },
+        }
+      )
+      .setOrigin(0.5)
+      .setDepth(2000);
+
+    this.time.delayedCall(2000, () => warning.destroy());
   }
 }
