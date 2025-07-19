@@ -25,6 +25,9 @@ export class Player extends Entity {
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: SpriteType) {
     super(scene, x, y, texture.base, SPRITES.PLAYER.base);
+    if (!scene.input.keyboard) {
+      throw new Error("Keyboard input not available");
+    }
     // анимация движения в другие стороны
     const anims = this.scene.anims;
     // кратное 3 т.к. 3 кадра у нашего героя, 3 медлено -> 9
@@ -44,10 +47,6 @@ export class Player extends Entity {
     this.createAnimation("left", texture.base, 12, 14, anims, animsFrameRate);
     this.createAnimation("right", texture.base, 24, 26, anims, animsFrameRate);
     this.createAnimation("up", texture.base, 36, 38, anims, animsFrameRate);
-
-    if (!scene.input.keyboard) {
-      throw new Error("Keyboard input not available");
-    }
 
     this.keys = {
       W: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
@@ -171,7 +170,7 @@ export class Player extends Entity {
       if (this.isAttacking) return;
 
       const target = this.findTarget(this.enemies);
-      if (!target) return;
+      if (!target || target.health <= 0) return; // Проверяем, жив ли моб
 
       this.isAttacking = true;
       this.play("fight");
@@ -197,6 +196,10 @@ export class Player extends Entity {
 
     if (distanceToEnemy < 50) {
       target.takeDamage(25);
+    }
+    // Удаляем моба из массива, если он умер
+    if (target.health <= 0) {
+      this.enemies = this.enemies?.filter((e) => e !== target) || [];
     }
   }
 
