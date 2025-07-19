@@ -27,7 +27,7 @@ export class Player extends Entity {
     this.textureKey = texture.base;
     this.moveSpeed = 25;
     // уменьшение фиизческой оболочки под макет героя
-    this.setSize(28, 32);
+    this.setSize(12, 16);
     this.setOffset(10, 16);
     // уменьшить персонажа
     this.setScale(0.8);

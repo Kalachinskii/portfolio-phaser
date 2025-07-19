@@ -62,15 +62,17 @@ export class Durotar extends Phaser.Scene {
     }
 
     // слои 1 и 2
-    const groundLayer = map.createLayer(LAYERS.GROUND, tileset, 0, 0);
-    const wallsLayer = map.createLayer(LAYERS.WALLS, tileset, 0, 0);
+    const earthGrass = map.createLayer(LAYERS.ONE_LAYER, tileset, 0, 0);
+    const bushesFlowers = map.createLayer(LAYERS.TWO_LAYER, tileset, 0, 0);
+    // 3(непроходимый)
+    const impassable = map.createLayer(LAYERS.THREE_LAYER, tileset, 0, 0);
     // класс сцены, кардинаты, текстурный ключ из прелоад
-    this.player = new Player(this, 400, 250, SPRITES.PLAYER);
+    this.player = new Player(this, 280, 180, SPRITES.PLAYER);
     // добавить врага кабан
     // "boar" - ключ для загрузки текстуры - SPRITES.BOAR
-    this.boar = new Enemy(this, 500, 250, SPRITES.BOAR.base);
+    this.boar = new Enemy(this, 500, 240, SPRITES.BOAR.base);
     // 2 кобанчик
-    this.boarSecond = new Enemy(this, 500, 350, SPRITES.BOAR.base);
+    this.boarSecond = new Enemy(this, 500, 375, SPRITES.BOAR.base);
 
     this.player.setEnemys([this.boar, this.boarSecond]);
 
@@ -83,14 +85,14 @@ export class Durotar extends Phaser.Scene {
     // запрет на выход за рамки мира
     this.player.setCollideWorldBounds(true);
     // запрет на объекты wallsLayer - слой со стенами
-    if (wallsLayer) {
-      this.physics.add.collider(this.player, wallsLayer);
+    if (impassable) {
+      this.physics.add.collider(this.player, impassable);
     }
 
     this.boar.setPlayer(this.player);
     this.boarSecond.setPlayer(this.player);
 
-    wallsLayer?.setCollisionByExclusion([-1]);
+    impassable?.setCollisionByExclusion([-1]);
     // аналог но в диапазоне id, id виден при выборе элемента в Tiled
     // wallsLayer?.setCollisionBetween(5,24);
     this.killsText = this.add.text(770, 10, `${this.killsCounter}`, {

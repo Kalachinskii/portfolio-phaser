@@ -1,11 +1,12 @@
 // имя карты
 export const TITLES = {
   NAME_MAP: "a",
-  NAME_MAP2: "b",
+  // NAME_MAP: "a",
+  // NAME_MAP2: "b",
 };
 
 export const SIZES = {
-  TILE: 32,
+  TILE: 16,
   PLAYER: {
     WIDTH: 48,
     HEIGHT: 48,
@@ -18,8 +19,9 @@ export const SIZES = {
 
 // слои
 export const LAYERS = {
-  GROUND: "1",
-  WALLS: "2",
+  ONE_LAYER: "1",
+  TWO_LAYER: "2",
+  THREE_LAYER: "3",
 };
 
 export const SPRITES = {

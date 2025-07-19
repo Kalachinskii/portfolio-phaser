@@ -51,6 +51,6 @@ export function Home() {
   }, []);
 
   return (
-    <div ref={gameContainerRef} style={{ width: "900px", height: "600px" }} />
+    <div ref={gameContainerRef} style={{ width: "800px", height: "600px" }} />
   );
 }
