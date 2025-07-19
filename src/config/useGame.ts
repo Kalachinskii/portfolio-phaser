@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Phaser from "phaser";
-import { createScenes } from "../scenes";
+import { createScenes } from "../scenes/location";
 
 export const useGame = (location: string) => {
   const gameRef = useRef<Phaser.Game | null>(null);

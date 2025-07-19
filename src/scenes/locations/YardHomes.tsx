@@ -2,91 +2,16 @@ import testJSON from "../../assets/test.json";
 import { Enemy } from "../../entities/enemy";
 import { Player } from "../../entities/player";
 import { LAYERS, SIZES, SPRITES, TITLES } from "../../utils/constants";
+import { Base } from "./Base";
 
-export class YardHomes extends Phaser.Scene {
+export class YardHomes extends Base {
   private player?: Player;
   private enemies: Enemy[] = [];
-  private killsCounter = 0;
-  private killsText!: Phaser.GameObjects.Text;
-  private doorHintText?: Phaser.GameObjects.Text;
   private doorTile: Phaser.Tilemaps.Tile | null = null;
   private map?: Phaser.Tilemaps.Tilemap;
-  private doorInteractionAllowed: boolean = true;
 
   constructor() {
     super("YardHomes");
-  }
-
-  preload() {
-    // Оптимизированная загрузка ресурсов
-    const { load } = this;
-    load.image(TITLES.NAME_MAP, "src/assets/sprites.png");
-    load.tilemapTiledJSON("map", "src/assets/test.json");
-
-    // Загрузка спрайтов через цикл
-    const spritesToLoad = [
-      { key: SPRITES.PLAYER.base, path: "src/assets/characters/alliance.png" },
-      { key: SPRITES.BOAR.base, path: "src/assets/characters/boar.png" },
-      {
-        key: SPRITES.PLAYER.fight,
-        path: "src/assets/characters/alliance-fight-small.png",
-      },
-    ];
-
-    spritesToLoad.forEach(({ key, path }) => {
-      load.spritesheet(key, path, {
-        frameWidth: SIZES[key.includes("BOAR") ? "BOAR" : "PLAYER"].WIDTH,
-        frameHeight: SIZES[key.includes("BOAR") ? "BOAR" : "PLAYER"].HEIGHT,
-      });
-    });
-  }
-
-  private setupDoorInteraction() {
-    if (!this.doorTile || !this.map) return;
-
-    const { tileWidth, tileHeight } = this.map;
-    const { pixelX, pixelY } = this.doorTile;
-
-    // Создаем зону взаимодействия
-    const doorZone = this.add
-      .zone(
-        pixelX + tileWidth / 2,
-        pixelY + tileHeight / 2,
-        tileWidth * 2,
-        tileHeight * 3
-      )
-      .setOrigin(0.5);
-
-    doorZone.setInteractive({ useHandCursor: true });
-
-    // Создаем текстовую подсказку
-    this.doorHintText = this.createDoorHintText(
-      pixelX + tileWidth / 2,
-      pixelY - 20
-    );
-
-    doorZone.on("pointerdown", () => {
-      if (this.doorInteractionAllowed) {
-        this.game.events.emit("navigate", "/");
-      } else {
-        this.showDistanceWarning();
-      }
-    });
-  }
-
-  private createDoorHintText(x: number, y: number): Phaser.GameObjects.Text {
-    return this.add
-      .text(x, y, "Кликните по двери чтобы войти", {
-        font: "16px Arial",
-        color: "#ffffff",
-        backgroundColor: "#333333",
-        padding: { x: 10, y: 5 },
-        align: "center",
-      })
-      .setOrigin(0.5)
-      .setDepth(1000)
-      .setVisible(false)
-      .setScrollFactor(0);
   }
 
   private setupPlayerAndEnemies() {
@@ -113,14 +38,28 @@ export class YardHomes extends Phaser.Scene {
     this.player.setCollideWorldBounds(true);
   }
 
-  private setupKillsCounter() {
-    this.killsText = this.add
-      .text(770, 10, `${this.killsCounter}`, {
-        fontFamily: "Arial",
-        fontSize: 16,
-        color: "#ffffff",
-      })
-      .setScrollFactor(0);
+  preload() {
+    // Оптимизированная загрузка ресурсов
+    const { load } = this;
+    load.image(TITLES.NAME_MAP, "src/assets/sprites.png");
+    load.tilemapTiledJSON("map", "src/assets/test.json");
+
+    // Загрузка спрайтов через цикл
+    const spritesToLoad = [
+      { key: SPRITES.PLAYER.base, path: "src/assets/characters/alliance.png" },
+      { key: SPRITES.BOAR.base, path: "src/assets/characters/boar.png" },
+      {
+        key: SPRITES.PLAYER.fight,
+        path: "src/assets/characters/alliance-fight-small.png",
+      },
+    ];
+
+    spritesToLoad.forEach(({ key, path }) => {
+      load.spritesheet(key, path, {
+        frameWidth: SIZES[key.includes("BOAR") ? "BOAR" : "PLAYER"].WIDTH,
+        frameHeight: SIZES[key.includes("BOAR") ? "BOAR" : "PLAYER"].HEIGHT,
+      });
+    });
   }
 
   create() {
@@ -148,7 +87,8 @@ export class YardHomes extends Phaser.Scene {
     });
 
     this.doorTile = this.map.findTile((tile) => tile.index === 1808);
-    this.setupDoorInteraction();
+    // расположение точки клика, сцена, куда перенаправить
+    this.doorTile && this.setupDoorInteraction(this.doorTile, this.map, "/");
     this.setupPlayerAndEnemies();
     this.setupKillsCounter();
 
@@ -167,7 +107,7 @@ export class YardHomes extends Phaser.Scene {
     this.cameras.main.roundPixels = true;
     this.player?.update(delta);
     this.enemies.forEach((enemy) => enemy.update());
-    this.killsText.setText(`${this.killsCounter}`);
+    this.killsText?.setText(`${this.killsCounter}`);
 
     // Управление отображением подсказки
     if (this.doorTile && this.player && this.map && this.doorHintText) {
@@ -185,24 +125,5 @@ export class YardHomes extends Phaser.Scene {
 
       this.doorHintText.setVisible(distance < 50);
     }
-  }
-
-  private showDistanceWarning() {
-    const warning = this.add
-      .text(
-        this.cameras.main.centerX,
-        this.cameras.main.centerY - 50,
-        "Подойдите ближе к двери!",
-        {
-          font: "20px Arial",
-          color: "#ff0000",
-          backgroundColor: "#333333",
-          padding: { x: 10, y: 5 },
-        }
-      )
-      .setOrigin(0.5)
-      .setDepth(2000);
-
-    this.time.delayedCall(2000, () => warning.destroy());
   }
 }
