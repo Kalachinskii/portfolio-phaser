@@ -1,5 +1,9 @@
-import type { Durotar } from "../scenes/locations/YardHomes";
+// import type { Durotar } from "../scenes/locations/YardHomes";
 import { Entity } from "./entity";
+
+interface SceneWithKills extends Phaser.Scene {
+  killsCounter?: number;
+}
 
 export class Enemy extends Entity {
   private player?: Entity;
@@ -105,7 +109,8 @@ export class Enemy extends Entity {
 
   // диактивация - монстр убит
   deactivate(): void {
-    const scene = this.scene as Durotar;
+    const scene = this.scene as SceneWithKills;
+
     // остановим анимацию
     this.stopCycleTween();
     // сохранить позицию
@@ -116,8 +121,10 @@ export class Enemy extends Entity {
     this.isAlive = false;
     // удаление противника с карты
     this.destroy();
-    // передача переменной через объект сцены (такое себе)
-    scene.killsCounter += 1;
+    // передача переменной через объект сцены с проверкой
+    if (scene.killsCounter !== undefined) {
+      scene.killsCounter += 1;
+    }
   }
 
   // расчитываем дистанцию до персонажа
