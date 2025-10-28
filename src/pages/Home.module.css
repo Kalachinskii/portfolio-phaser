@@ -1,0 +1,9 @@
+.container {
+  position: relative;
+  background-color: rgb(185, 169, 169);
+}
+.img {
+  position: absolute;
+  height: 100%;
+  left: 0;
+}
