@@ -2,8 +2,56 @@
   position: relative;
   background-color: rgb(185, 169, 169);
 }
+
 .img {
   position: absolute;
   height: 100%;
   left: 0;
+}
+
+.status {
+  position: absolute;
+  height: 100%;
+  left: 18.3%;
+  border: 1px solid rgb(0, 0, 0);
+  width: 8.8%;
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.statusSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.statusSection h4 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #333;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 4px;
+}
+
+.heroStats,
+.heroBar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  padding-left: 1.5%;
+}
+
+.heroStats li,
+.heroBar li {
+  padding: 2px 0;
+  line-height: 1.3;
 }
