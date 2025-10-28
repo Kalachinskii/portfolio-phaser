@@ -1,4 +1,3 @@
-import yardJSON from "../../assets/maps/yard.json";
 import { Enemy } from "../../entities/enemy";
 import { Player } from "../../entities/player";
 import { LAYERS, SIZES, SPRITES, TITLES } from "../../utils/constants";
@@ -39,18 +38,17 @@ export class YardHomes extends Base {
   }
 
   preload() {
-    // Оптимизированная загрузка ресурсов
     const { load } = this;
-    load.image(TITLES.NAME_MAP, "src/assets/sprites.png");
-    load.tilemapTiledJSON("map", "src/assets/maps/yard.json");
+    load.image(TITLES.NAME_MAP, "assets/sprites.png");
+    load.tilemapTiledJSON("yard-map", "assets/maps/yard.json");
 
-    // Загрузка спрайтов через цикл
+    // ПУТИ для спрайтов
     const spritesToLoad = [
-      { key: SPRITES.PLAYER.base, path: "src/assets/characters/alliance.png" },
-      { key: SPRITES.BOAR.base, path: "src/assets/characters/boar.png" },
+      { key: SPRITES.PLAYER.base, path: "assets/characters/alliance.png" },
+      { key: SPRITES.BOAR.base, path: "assets/characters/boar.png" },
       {
         key: SPRITES.PLAYER.fight,
-        path: "src/assets/characters/alliance-fight-small.png",
+        path: "assets/characters/alliance-fight-small.png",
       },
     ];
 
@@ -63,9 +61,13 @@ export class YardHomes extends Base {
   }
 
   create() {
-    this.map = this.make.tilemap({ key: "map" });
+    // используем тот же что в preload
+    this.map = this.make.tilemap({ key: "yard-map" });
+
+    // получаем tileset имя из загруженной карты
+    const tilesetName = this.map.tilesets[0]?.name || "Villiage";
     const tileset = this.map.addTilesetImage(
-      yardJSON.tilesets[0].name,
+      tilesetName,
       TITLES.NAME_MAP,
       SIZES.TILE,
       SIZES.TILE

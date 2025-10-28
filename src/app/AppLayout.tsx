@@ -4,7 +4,7 @@ import { Footer } from "../pages/Layout/Footer";
 import { Controls } from "../companents/controls/Controls";
 import { Status } from "../companents/status/Status";
 import styles from "./Home.module.css";
-import heroImage from "../assets/hero.png";
+import heroImage from "/assets/hero.png";
 
 export function AppLayout() {
   return (

@@ -1,4 +1,3 @@
-import homeJSON from "../../assets/maps/home.json";
 import type { Enemy } from "../../entities/enemy";
 import { Player } from "../../entities/player";
 import { LAYERS, SIZES, SPRITES, TITLES } from "../../utils/constants";
@@ -15,22 +14,22 @@ export class Home extends Base {
   }
 
   preload() {
-    this.load.image(TITLES.NAME_MAP_HOME, "src/assets/sprites.png");
-    this.load.tilemapTiledJSON("map", "src/assets/maps/home.json");
+    this.load.image(TITLES.NAME_MAP_HOME, "assets/sprites.png");
+    this.load.tilemapTiledJSON("home-map", "assets/maps/home.json");
 
-    // Загрузка спрайтов через цикл
+    // ПУТИ для спрайтов
     const spritesToLoad = [
-      { key: SPRITES.PLAYER.base, path: "src/assets/characters/alliance.png" },
+      { key: SPRITES.PLAYER.base, path: "assets/characters/alliance.png" },
       {
         key: SPRITES.PLAYER.fight,
-        path: "src/assets/characters/alliance-fight-small.png",
+        path: "assets/characters/alliance-fight-small.png",
       },
     ];
 
     spritesToLoad.forEach(({ key, path }) => {
       this.load.spritesheet(key, path, {
-        frameWidth: SIZES[key.includes("BOAR") ? "BOAR" : "PLAYER"].WIDTH,
-        frameHeight: SIZES[key.includes("BOAR") ? "BOAR" : "PLAYER"].HEIGHT,
+        frameWidth: SIZES.PLAYER.WIDTH,
+        frameHeight: SIZES.PLAYER.HEIGHT,
       });
     });
   }
@@ -55,9 +54,12 @@ export class Home extends Base {
   }
 
   create() {
-    this.map = this.make.tilemap({ key: "map" });
+    this.map = this.make.tilemap({ key: "home-map" });
+
+    // tileset имя из загруженной карты
+    const tilesetName = this.map.tilesets[0]?.name || "Interiors";
     const tileset = this.map.addTilesetImage(
-      homeJSON.tilesets[0].name,
+      tilesetName,
       TITLES.NAME_MAP_HOME,
       SIZES.TILE,
       SIZES.TILE
@@ -78,7 +80,9 @@ export class Home extends Base {
       this.map?.createLayer(layer, tileset, 0, 0);
     });
 
+    // ПОИСК ТАЙЛА - используем индекс из Tiled
     this.doorTile = this.map.findTile((tile) => tile.index === 3365);
+
     // расположение точки клика, сцена, куда перенаправить
     this.doorTile &&
       this.setupDoorInteraction(this.doorTile, this.map, "/street");
