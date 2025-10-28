@@ -1,69 +1,92 @@
-# React + TypeScript + Vite
+# Phaser RPG Demo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Проект представляет собой демо-версию пиксельной RPG игры, разработанной на Phaser 3 в связке с React.
 
-Currently, two official plugins are available:
+Игра демонстрирует базовые механики RPG жанра: перемещение персонажа по карте, систему характеристик героя, боевую систему и смену игровых локаций. Проект показывает навыки работы с игровыми движками, 2D графикой и созданием интерактивных веб-приложений.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## ⚠️ Примечание
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Проект находится в активной разработке и представляет собой демонстрацию возможностей интеграции Phaser 3 с современным React-стеком. Это пет-проект для портфолио, демонстрирующий навыки работы с игровыми технологиями в вебе.
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+**Оптимизирован для десктопных экранов (рекомендуемое разрешение 1920×1080)**
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 📋 Оглавление
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- [Демо](#демо)
+- [Функциональность](#функциональность)
+- [Управление](#управление)
+- [Стек технологий](#стек-технологий)
+- [Установка и запуск](#установка-и-запуск)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🎮 Демо
+
+**[👉 Посмотреть работающую версию](/)**
+
+---
+
+## 🚀 Функциональность
+
+### Игровой движок
+
+- Полноценная интеграция Phaser 3 с React
+- Плавное перемещение персонажа (WASD)
+- Система коллизий и анимации
+- Смена игровых локаций
+- Система характеристик персонажа
+
+### Игровая механика
+
+- Шкалы здоровья
+- Боевая система с атакой
+- Динамическая загрузка контента
+- Реализация боя
+
+### Управление
+
+- W / ↑ - Вперед
+- A / ← - Влево
+- S / ↓ - Назад
+- D / → - Вправо
+- Пробел - Атака (вне помещения)
+
+## Установка и запуск
+
+Для запуска проекта локально вам потребуется Node.js (рекомендуется версия 18 или выше).
+
+1.  **Склонируйте репозиторий:**
+
+    ```bash
+    git clone https://github.com/Kalachinskii/portfolio-phaser.git
+    ```
+
+2.  **Перейдите в созданную папку:**
+
+    ```bash
+    cd portfolio-phaser
+    ```
+
+3.  **Установите зависимости:**
+
+    ```bash
+    npm install
+    ```
+
+    _(Этот шаг загрузит все необходимые библиотеки, включая Phaser 3 и React)_
+
+4.  **Запустите сервер для разработки:**
+
+    ```bash
+    npm run dev
+    ```
+
+    _(Команда запустит приложение в режиме разработки. Оно откроется по адресу [http://localhost:5173](http://localhost:5173))_
+
+5.  **Откройте браузер и перейдите по адресу из предыдущего шага.**
+
+    _(Если браузер не открылся автоматически, скопируйте адрес из терминала и вставьте в адресную строку браузера вручную)_
