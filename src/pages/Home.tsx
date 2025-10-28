@@ -2,6 +2,8 @@ import { useParams } from "react-router-dom";
 import { useGame } from "../config/useGame";
 import styles from "./Home.module.css";
 import heroImage from "../assets/hero.png";
+import { Controls } from "../companents/controls/Controls";
+import { Status } from "../companents/status/Status";
 
 export function Home() {
   const { locationId } = useParams();
@@ -11,56 +13,9 @@ export function Home() {
   return (
     <div className={styles.container}>
       <img className={styles.img} src={heroImage} alt="hero img" />
-      <div className={styles.status}>
-        <div className={styles.statusSection}>
-          <h4>Статус:</h4>
-          <ul className={styles.heroBar}>
-            <li>❤️: 100/100</li>
-            <li>✨: 200/200</li>
-            <li>⚡: 80/80</li>
-          </ul>
-        </div>
-
-        <div className={styles.statusSection}>
-          <h4>Характеристики:</h4>
-          <ul className={styles.heroStats}>
-            <li>💪 Сила: 15</li>
-            <li>🔮 Магическая сила: 30</li>
-            <li>🎯 Ловкость: 12</li>
-            <li>📚 Интеллект: 8</li>
-            <li>🛡️ Защита: 10</li>
-            <li>👁️ Точность: 95%</li>
-            <li>🌀 Уворот: 15%</li>
-            <li>🍀 Удача: 7</li>
-          </ul>
-        </div>
-      </div>
+      <Status />
       <div ref={gameContainerRef} style={{ width: "800px", height: "600px" }} />
-      <div className={styles.controls}>
-        <h4>Управление:</h4>
-        <div className={styles.controlGroup}>
-          <div className={styles.controlRow}>
-            <kbd>W</kbd> <kbd className={styles.arrow}>↑</kbd>
-            <span>Вперед</span>
-          </div>
-          <div className={styles.controlRow}>
-            <kbd>A</kbd> <kbd className={styles.arrow}>←</kbd>
-            <span>Влево</span>
-          </div>
-          <div className={styles.controlRow}>
-            <kbd>S</kbd> <kbd className={styles.arrow}>↓</kbd>
-            <span>Назад</span>
-          </div>
-          <div className={styles.controlRow}>
-            <kbd>D</kbd> <kbd className={styles.arrow}>→</kbd>
-            <span>Вправо</span>
-          </div>
-          <div className={styles.controlRow}>
-            <kbd>Пробел</kbd>
-            <span>Атака</span>
-          </div>
-        </div>
-      </div>
+      <Controls />
     </div>
   );
 }
