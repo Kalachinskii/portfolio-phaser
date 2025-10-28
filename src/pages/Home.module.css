@@ -55,3 +55,69 @@
   padding: 2px 0;
   line-height: 1.3;
 }
+
+.controls {
+  position: absolute;
+  height: 100%;
+  right: 0%;
+  border: 1px solid rgb(26, 231, 8);
+  width: 26.9%;
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.controls h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 8px;
+}
+
+.controlGroup {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 2%;
+  border: 1px solid fuchsia;
+  align-items: start;
+  /* gap: 10px; */
+  gap: 2%;
+}
+
+.controlRow {
+  width: 18%;
+  height: 15%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  /* gap: 10px; */
+  font-size: 14px;
+  color: #333;
+}
+
+.controlRow span {
+  width: 100%;
+  /* border: 1px solid green; */
+  text-align: center;
+}
+
+kbd {
+  background: #f4f4f4;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 16px;
+  font-family: "Courier New", monospace;
+  box-shadow: 0 2px 0 #ccc;
+  min-width: 24px;
+  text-align: center;
+  display: inline-block;
+}
+
+.arrow {
+  font-weight: 900;
+}
