@@ -22,7 +22,7 @@ export function Home() {
         </div>
 
         <div className={styles.statusSection}>
-          <h4>Характеристика:</h4>
+          <h4>Характеристики:</h4>
           <ul className={styles.heroStats}>
             <li>💪 Сила: 15</li>
             <li>🔮 Магическая сила: 30</li>
